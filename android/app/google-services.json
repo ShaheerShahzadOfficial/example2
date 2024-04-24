@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "568056947116",
+    "project_id": "challengeapp-557ca",
+    "storage_bucket": "challengeapp-557ca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:568056947116:android:3ecb1b217c68ffbe651a09",
+        "android_client_info": {
+          "package_name": "com.awesomeproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwqCgkm-fRuOvYBKePnIkI9WlOIm6Okgc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
