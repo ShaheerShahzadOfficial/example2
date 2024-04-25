@@ -1,5 +1,5 @@
+/* eslint-disable prettier/prettier */
 import {
-  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -15,6 +15,7 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 const {height, width} = SIZES;
 
@@ -31,13 +32,24 @@ const Register = () => {
 
     await auth()
       .createUserWithEmailAndPassword(Email, Password)
-      .then(() => {
-        console.log('User account created & signed in!');
-        ToastAndroid.show(
-          'User account created & signed in!',
-          ToastAndroid.SHORT,
-        );
-        navigation.navigate('Home');
+      .then(res => {
+        console.log(res.user);
+        firestore()
+          .collection('Users')
+          .doc(res.user.uid)
+          .set({
+            Email,
+            Password,
+            createdAt: new Date(),
+          })
+          .then(() => {
+            console.log('User account created & signed in!');
+            ToastAndroid.show(
+              'User account created & signed in!',
+              ToastAndroid.SHORT,
+            );
+            navigation.navigate('Home');
+          });
       })
       .catch(error => {
         if (error.code === 'auth/email-already-in-use') {
@@ -56,7 +68,7 @@ const Register = () => {
           );
         }
 
-        console.error(error);
+        // console.error(error);
       });
   };
 
@@ -80,7 +92,7 @@ const Register = () => {
               placeholderTextColor={'#545454'}
               value={Email}
               style={styles.TextInput}
-              placeholder="Password"
+              placeholder="Email"
               onChangeText={text => setEmail(text)}
             />
           </View>

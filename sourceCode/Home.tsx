@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Pressable,
   SafeAreaView,
@@ -5,7 +6,6 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
@@ -69,14 +69,22 @@ const Home = () => {
   useEffect(() => {
     if (search) {
       setFilteredTasks(
-        Tasks.filter((item:any) => item?._data?.Title.includes(search)),
+        Tasks.filter((item: any) => item?._data?.Title.includes(search)),
       );
-      console.log(search)
+      console.log(search);
     }
-  }, [search]);
+
+    if (search === '') {
+      setFilteredTasks(Tasks);
+    }
+  }, [Tasks, search]);
 
   return (
     <SafeAreaView style={styles.container}>
+      <Pressable style={styles.LoginButton} onPress={logout}>
+        <Text style={styles.LoginButtonText}>Logout</Text>
+      </Pressable>
+
       <View style={styles.TextInputContainer}>
         <FontAwesome name="search" size={FONTS.font20} color="#000" />
         <TextInput
@@ -96,12 +104,20 @@ const Home = () => {
           {FilteredTasks.map((item: any, i: number) => {
             const id = item?._ref?._documentPath?._parts[1];
             return (
-              <View style={styles.taskContainer} key={String(i)}>
+              <Pressable
+                onPress={() =>
+                  navigation.navigate('TaskDetail', {
+                    id,
+                  })
+                }
+                style={styles.taskContainer}
+                key={String(i)}>
                 <Text style={styles.title}>{item?._data?.Title}</Text>
                 <Text style={styles.description}>
-                  {item?._data?.Description}
+                  {item?._data?.Description.slice(0, 100)}{' '}
+                  {item?._data?.Description.length >= 100 ? '...more' : ''}
                 </Text>
-              </View>
+              </Pressable>
             );
           })}
         </View>
@@ -173,12 +189,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#4106FF',
   },
   description: {
-    fontSize: FONTS.font10,
+    fontSize: FONTS.font14,
     // fontWeight:"600",
     color: '#000',
   },
   title: {
-    fontSize: FONTS.font14,
+    fontSize: FONTS.font18,
     fontWeight: '600',
     color: '#000',
   },
@@ -193,11 +209,12 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 10},
     shadowOpacity: FONTS.font10,
     elevation: FONTS.font10,
-    marginBottom: FONTS.font20,
+    // marginBottom: FONTS.font20,
     borderRadius: FONTS.font32,
     // justifyContent: 'space-around',
     paddingVertical: FONTS.font10 / 2,
     paddingHorizontal: FONTS.font14,
+    marginVertical: FONTS.font10,
   },
   TextInput: {
     color: '#000',
@@ -206,5 +223,19 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     paddingHorizontal: FONTS.font10,
     width: '86%',
+  },
+  LoginButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'flex-end',
+    padding: FONTS.font8,
+    backgroundColor: '#4106FF',
+    borderRadius: FONTS.font10 / 2,
+    margin: FONTS.font10,
+  },
+  LoginButtonText: {
+    color: '#fff',
+    fontSize: FONTS.font16,
+    fontWeight: '600',
   },
 });

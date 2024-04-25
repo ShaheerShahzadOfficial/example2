@@ -1,46 +1,58 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
+
 import {
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   ToastAndroid,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {FONTS, SIZES} from './Theme/theme';
 import {useNavigation} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
 
 const {width} = SIZES;
 
-const CreateTask = () => {
-  const navigation = useNavigation();
+const EditTask = ({route}: {route: any}) => {
+  const {id} = route.params;
+
+  const navigation: any = useNavigation();
   const [Title, setTitle] = useState('');
   const [Description, setDescription] = useState('');
 
-  const createTask = () => {
+  useEffect(() => {
     firestore()
-      .collection('Tasks')
-      .add({
+      .doc(`Tasks/${id}`)
+      .get()
+      .then(res => {
+        // console.log(res.data());
+        setTitle(res.data()?.Title);
+        setDescription(res.data()?.Description);
+      });
+  }, [id]);
+
+  const updateTask = () => {
+    firestore()
+      .doc(`Tasks/${id}`)
+      .update({
         Title: Title,
         Description: Description,
-        userId: auth().currentUser?.uid,
         createdAt: new Date(),
       })
       .then(() => {
-        console.log('Task Created Successfully!');
-        ToastAndroid.show('Task Created Successfully!', ToastAndroid.SHORT);
-
-        navigation.goBack();
-      });
+        ToastAndroid.show('Task updated Successfully!', ToastAndroid.SHORT);
+        console.log('Task updated Successfully!');
+      })
+      .finally(() => navigation.navigate('Home'));
   };
 
   return (
-    <View>
+    <View style={{flex: 1}}>
       <View style={styles.Header}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Pressable onPress={() => navigation.goBack()}>
@@ -50,41 +62,46 @@ const CreateTask = () => {
               size={FONTS.font26}
             />
           </Pressable>
-          <Text style={styles.HeaderText}>Create Task</Text>
+          <Text style={styles.HeaderText}>Update Task</Text>
         </View>
         <View>
           <Pressable
-            onPress={createTask}
+            onPress={updateTask}
             android_ripple={{color: '#4106FF'}}
             style={styles.HeadersBtn}>
-            <Text style={styles.HeadersBtnText}>Save</Text>
+            <Text style={styles.HeadersBtnText}>update</Text>
           </Pressable>
         </View>
       </View>
 
-      <TextInput
-        placeholder="Title"
-        style={styles.titleInput}
-        multiline
-        maxLength={300}
-        keyboardType="default"
-        value={Title}
-        onChangeText={text => setTitle(text)}
-      />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        alwaysBounceVertical={false}
+        style={{flex: 1}}>
+        <TextInput
+          placeholder="Title"
+          style={styles.titleInput}
+          multiline
+          maxLength={300}
+          keyboardType="default"
+          value={Title}
+          onChangeText={text => setTitle(text)}
+        />
 
-      <TextInput
-        placeholder="Decription"
-        style={styles.descriptionInput}
-        multiline
-        keyboardType="default"
-        value={Description}
-        onChangeText={text => setDescription(text)}
-      />
+        <TextInput
+          placeholder="Decription"
+          style={styles.descriptionInput}
+          multiline
+          keyboardType="default"
+          value={Description}
+          onChangeText={text => setDescription(text)}
+        />
+      </ScrollView>
     </View>
   );
 };
 
-export default CreateTask;
+export default EditTask;
 
 const styles = StyleSheet.create({
   Header: {

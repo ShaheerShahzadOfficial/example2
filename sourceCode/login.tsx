@@ -1,5 +1,5 @@
+/* eslint-disable prettier/prettier */
 import {
-  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -13,7 +13,7 @@ import React, {useState} from 'react';
 import {FONTS, SIZES} from './Theme/theme';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 
 const {height, width} = SIZES;
@@ -22,51 +22,44 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [Password, setPassword] = useState('');
   const [Email, setEmail] = useState('');
-  const navigation:any = useNavigation()
+  const navigation: any = useNavigation();
 
-  const login = async () =>{
-
+  const login = async () => {
     if (!Email && !Password) {
       return ToastAndroid.show('Enter Email and Password', ToastAndroid.SHORT);
     }
 
-   await auth()
-  .signInWithEmailAndPassword(Email, Password)
-  .then(() => {
-    console.log('User signed in Successfully!');
-    ToastAndroid.show(
-      'User signed in Successfully!',
-      ToastAndroid.SHORT,
-    );
-    navigation.navigate('Home');
-  })
-  .catch(error => {
-    if (error.code === 'auth/email-already-in-use') {
-      console.log('That email address is already in use!');
-      ToastAndroid.show(
-        'That email address is already in use!',
-        ToastAndroid.SHORT,
-      );
-    }
+    await auth()
+      .signInWithEmailAndPassword(Email, Password)
+      .then(() => {
+        console.log('User signed in Successfully!');
+        ToastAndroid.show('User signed in Successfully!', ToastAndroid.SHORT);
+        navigation.navigate('Home');
+      })
+      .catch(error => {
+        if (error.code === 'auth/email-already-in-use') {
+          console.log('That email address is already in use!');
+          ToastAndroid.show(
+            'That email address is already in use!',
+            ToastAndroid.SHORT,
+          );
+        }
 
-    if (error.code === 'auth/invalid-email') {
-      console.log('That email address is invalid!');
-      ToastAndroid.show(
-        'That email address is invalid!',
-        ToastAndroid.SHORT,
-      );
-    }
+        if (error.code === 'auth/invalid-email') {
+          console.log('That email address is invalid!');
+          ToastAndroid.show(
+            'That email address is invalid!',
+            ToastAndroid.SHORT,
+          );
+        }
 
-    if (error.code === " auth/invalid-credential") {
-      ToastAndroid.show(
-        'Credential are invalid!',
-        ToastAndroid.SHORT,
-      );
-    }
+        if (error.code === ' auth/invalid-credential') {
+          ToastAndroid.show('Credential are invalid!', ToastAndroid.SHORT);
+        }
 
-    console.error(error.code);
-  });
-  }
+        console.error(error.code);
+      });
+  };
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -87,7 +80,7 @@ const Login = () => {
               placeholderTextColor={'#545454'}
               value={Email}
               style={styles.TextInput}
-              placeholder="Password"
+              placeholder="Email"
               onChangeText={text => setEmail(text)}
             />
           </View>
